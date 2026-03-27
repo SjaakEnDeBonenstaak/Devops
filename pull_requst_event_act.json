@@ -1,0 +1,29 @@
+{
+  "action": "opened",
+  "number": 1,
+  "pull_request": {
+    "number": 1,
+    "state": "open",
+    "head": {
+      "sha": "abc123def456",
+      "ref": "feature/my-branch",
+      "repo": {
+        "full_name": "jouw-naam/jouw-repo"
+      }
+    },
+    "base": {
+      "ref": "main",
+      "sha": "base123def456",
+      "repo": {
+        "full_name": "jouw-naam/jouw-repo"
+      }
+    }
+  },
+  "repository": {
+    "full_name": "jouw-naam/jouw-repo",
+    "name": "jouw-repo",
+    "owner": {
+      "login": "jouw-naam"
+    }
+  }
+}

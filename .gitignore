@@ -1,5 +1,7 @@
 .claude
 
+pull_request_event_act.json
+
 # Dependencies
 node_modules/
 npm-debug.log*
