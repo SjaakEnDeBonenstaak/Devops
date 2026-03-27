@@ -47,6 +47,9 @@ jobs:
           echo "=== Raw event payload ==="
           cat $GITHUB_EVENT_PATH
 
+      - name: Run linter
+        run: npm run lint
+
       - name: Run tests
         uses: ArtiomTr/jest-coverage-report-action@v2
         with:
