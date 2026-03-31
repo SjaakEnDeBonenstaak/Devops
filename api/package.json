@@ -6,7 +6,7 @@
     "start": "node ./bin/www",
     "test": "jest",
     "lint": "npx eslint .",
-    "dev": "nodemon -r dotenv/config ./bin/www"
+    "dev": "nodemon --legacy-watch -r dotenv/config ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -18,6 +18,7 @@
     "morgan": "~1.9.1"
   },
   "devDependencies": {
+    "nodemon": "^3.1.10",
     "@eslint/js": "^10.0.1",
     "@shelf/jest-mongodb": "^6.0.2",
     "eslint": "^10.1.0",

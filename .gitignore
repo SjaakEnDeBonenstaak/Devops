@@ -42,3 +42,7 @@ coverage/
 # Logs
 logs/
 *.log
+
+# MongoDB data
+mongo/data/*
+!mongo/data/.gitkeep
