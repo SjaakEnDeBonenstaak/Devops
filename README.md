@@ -4,3 +4,5 @@
 
 
 [![Client — Build & Test](https://github.com/SjaakEnDeBonenstaak/Devops/actions/workflows/CI-Client.yml/badge.svg)](https://github.com/SjaakEnDeBonenstaak/Devops/actions/workflows/CI-Client.yml)
+
+[![Inventory — Test & Lint](https://github.com/SjaakEnDeBonenstaak/Devops/actions/workflows/CI-Inventory.yml/badge.svg)](https://github.com/SjaakEnDeBonenstaak/Devops/actions/workflows/CI-Inventory.yml)
