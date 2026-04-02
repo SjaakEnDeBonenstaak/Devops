@@ -12,6 +12,24 @@ services:
     networks:
       - app-network
 
+  redis:
+    image: redis:7-alpine
+    restart: always
+    networks:
+      - app-network
+
+  mongo-inventory:
+    image: mongo:7
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${INVENTORY_DB_NAME}
+    volumes:
+      - ./mongo-inventory/data:/data/db
+    networks:
+      - app-network
+
   api:
     build:
       context: ./api
@@ -20,10 +38,80 @@ services:
       PORT: 3000
       MONGO_URL: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/${DB_NAME}?authSource=admin
       DB_NAME: ${DB_NAME}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     ports:
       - "3000:3000"
     depends_on:
       - mongo
+      - redis
+    networks:
+      - app-network
+
+  inventory-service:
+    build:
+      context: ./inventory-service
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3002
+      MONGO_URL: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo-inventory:27017/${INVENTORY_DB_NAME}?authSource=admin
+      DB_NAME: ${INVENTORY_DB_NAME}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "3002:3002"
+    depends_on:
+      - mongo-inventory
+      - redis
+    networks:
+      - app-network
+
+  db-exporter:
+    image: bitnami/mongodb-exporter:latest
+    command:
+      - --collect-all
+      - --compatible-mode
+    environment:
+      MONGODB_URI: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/admin
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - api
+      - db-exporter
+    networks:
+      - app-network
+
+  alertmanager:
+    build:
+      context: ./alertmanager
+      dockerfile: Dockerfile
+    environment:
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
+      ALERT_FROM_EMAIL: ${ALERT_FROM_EMAIL}
+      ALERT_TO_EMAIL: ${ALERT_TO_EMAIL}
+    ports:
+      - "9093:9093"
+    networks:
+      - app-network
+
+  grafana:
+    build:
+      context: ./grafana
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    depends_on:
+      - prometheus
     networks:
       - app-network
 
