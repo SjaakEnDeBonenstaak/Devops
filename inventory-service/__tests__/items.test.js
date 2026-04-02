@@ -2,6 +2,8 @@ const request = require('supertest');
 const app = require('../app');
 const { db, client } = require('../services/database');
 
+jest.mock('../services/redis', () => ({ subscriber: { subscribe: jest.fn(), on: jest.fn() } }));
+
 afterAll(async () => {
   await client.close();
 });

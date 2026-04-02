@@ -12,6 +12,12 @@ services:
     networks:
       - app-network
 
+  redis:
+    image: redis:7-alpine
+    restart: always
+    networks:
+      - app-network
+
   mongo-inventory:
     image: mongo:7
     restart: always
@@ -32,10 +38,13 @@ services:
       PORT: 3000
       MONGO_URL: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017/${DB_NAME}?authSource=admin
       DB_NAME: ${DB_NAME}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     ports:
       - "3000:3000"
     depends_on:
       - mongo
+      - redis
     networks:
       - app-network
 
@@ -47,10 +56,13 @@ services:
       PORT: 3001
       MONGO_URL: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo-inventory:27017/${INVENTORY_DB_NAME}?authSource=admin
       DB_NAME: ${INVENTORY_DB_NAME}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     ports:
       - "3001:3001"
     depends_on:
       - mongo-inventory
+      - redis
     networks:
       - app-network
 
