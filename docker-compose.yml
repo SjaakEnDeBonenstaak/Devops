@@ -12,6 +12,18 @@ services:
     networks:
       - app-network
 
+  mongo-inventory:
+    image: mongo:7
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${INVENTORY_DB_NAME}
+    volumes:
+      - ./mongo-inventory/data:/data/db
+    networks:
+      - app-network
+
   api:
     build:
       context: ./api
@@ -24,6 +36,21 @@ services:
       - "3000:3000"
     depends_on:
       - mongo
+    networks:
+      - app-network
+
+  inventory-service:
+    build:
+      context: ./inventory-service
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3001
+      MONGO_URL: mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo-inventory:27017/${INVENTORY_DB_NAME}?authSource=admin
+      DB_NAME: ${INVENTORY_DB_NAME}
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongo-inventory
     networks:
       - app-network
 
