@@ -1,9 +1,18 @@
 require('dotenv').config();
 const express = require('express');
+const promBundle = require('express-prom-bundle');
 const itemsRouter = require('./routes/items');
 
 const app = express();
 
+const metricsMiddleware = promBundle({
+  includeMethod: true,
+  includePath: true,
+  metricsPath: '/metrics',
+  promClient: { collectDefaultMetrics: {} },
+});
+
+app.use(metricsMiddleware);
 app.use(express.json());
 app.use('/items', itemsRouter);
 

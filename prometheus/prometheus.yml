@@ -15,6 +15,10 @@ scrape_configs:
     static_configs:
       - targets: ['api:3000']
 
+  - job_name: 'inventory-service'
+    static_configs:
+      - targets: ['inventory-service:3002']
+
   - job_name: 'mongodb'
     static_configs:
       - targets: ['db-exporter:9216']
