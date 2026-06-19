@@ -52,8 +52,7 @@ services:
       - key: API_URL
         sync: false
 
-databases:
-  - name: redis
-    type: redis
+  - type: redis
+    name: redis
     plan: free
     ipAllowList: []
