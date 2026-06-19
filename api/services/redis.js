@@ -1,9 +1,7 @@
 const Redis = require('ioredis');
 
-const publisher = new Redis({
-  host: process.env.REDIS_HOST || 'localhost',
-  port: process.env.REDIS_PORT || 6379,
-  lazyConnect: true,
-});
+const publisher = process.env.REDIS_URL
+  ? new Redis(process.env.REDIS_URL, { lazyConnect: true })
+  : new Redis({ host: process.env.REDIS_HOST || 'localhost', port: parseInt(process.env.REDIS_PORT || '6379'), lazyConnect: true });
 
 module.exports = { publisher };

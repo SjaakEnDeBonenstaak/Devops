@@ -7,7 +7,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
       MONGO_INITDB_DATABASE: ${DB_NAME}
     volumes:
-      - ./mongo/data:/data/db
+      - mongo-data:/data/db
       - ./mongo/init:/docker-entrypoint-initdb.d
     networks:
       - app-network
@@ -26,7 +26,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
       MONGO_INITDB_DATABASE: ${INVENTORY_DB_NAME}
     volumes:
-      - ./mongo-inventory/data:/data/db
+      - mongo-inventory-data:/data/db
     networks:
       - app-network
 
@@ -132,3 +132,7 @@ services:
 
 networks:
   app-network:
+
+volumes:
+  mongo-data:
+  mongo-inventory-data:
