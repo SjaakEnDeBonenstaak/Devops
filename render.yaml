@@ -1,0 +1,59 @@
+services:
+  - type: web
+    name: api
+    env: docker
+    dockerfilePath: ./api/Dockerfile.prod
+    dockerContext: ./api
+    envVars:
+      - key: MONGO_URL
+        sync: false
+      - key: DB_NAME
+        value: devops
+      - key: REDIS_URL
+        fromService:
+          name: redis
+          type: redis
+          property: connectionString
+
+  - type: web
+    name: inventory-service
+    env: docker
+    dockerfilePath: ./inventory-service/Dockerfile
+    dockerContext: ./inventory-service
+    envVars:
+      - key: MONGO_URL
+        sync: false
+      - key: DB_NAME
+        value: inventory
+      - key: REDIS_URL
+        fromService:
+          name: redis
+          type: redis
+          property: connectionString
+
+  - type: web
+    name: prometheus
+    env: docker
+    dockerfilePath: ./prometheus/Dockerfile
+    dockerContext: ./prometheus
+
+  - type: web
+    name: grafana
+    env: docker
+    dockerfilePath: ./grafana/Dockerfile
+    dockerContext: ./grafana
+
+  - type: web
+    name: client
+    env: docker
+    dockerfilePath: ./client/Dockerfile
+    dockerContext: ./client
+    envVars:
+      - key: API_URL
+        sync: false
+
+databases:
+  - name: redis
+    type: redis
+    plan: free
+    ipAllowList: []
