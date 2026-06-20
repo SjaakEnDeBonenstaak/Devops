@@ -1,0 +1,60 @@
+# Zelfstandige staging-stack. Draaien met:
+#   docker compose -f docker-compose.staging.yml -p staging up -d --build
+# Gebruikt aparte poorten (4000/4001/4002) en eigen redis, zodat het
+# naast de productie-stack kan draaien zonder poortconflicten.
+services:
+  redis:
+    image: redis:7-alpine
+    restart: always
+    networks:
+      - staging-net
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3000
+      MONGO_URL: ${STAGING_API_MONGO_URL}
+      DB_NAME: devops-staging
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "4001:3000"
+    depends_on:
+      - redis
+    networks:
+      - staging-net
+
+  inventory-service:
+    build:
+      context: ./inventory-service
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3002
+      MONGO_URL: ${STAGING_INVENTORY_MONGO_URL}
+      DB_NAME: inventory-staging
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "4002:3002"
+    depends_on:
+      - redis
+    networks:
+      - staging-net
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    environment:
+      API_URL: https://staging-api.lompvaardig.xyz
+    ports:
+      - "4000:80"
+    depends_on:
+      - api
+    networks:
+      - staging-net
+
+networks:
+  staging-net:

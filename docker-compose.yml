@@ -96,7 +96,9 @@ services:
       context: ./alertmanager
       dockerfile: Dockerfile
     environment:
-      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
+      SMTP_SMARTHOST: ${SMTP_SMARTHOST}
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
       ALERT_FROM_EMAIL: ${ALERT_FROM_EMAIL}
       ALERT_TO_EMAIL: ${ALERT_TO_EMAIL}
     ports:

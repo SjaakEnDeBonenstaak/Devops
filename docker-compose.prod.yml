@@ -1,0 +1,31 @@
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    environment:
+      API_URL: https://api.lompvaardig.xyz
+    ports:
+      - "80:80"
+    volumes: []
+
+  api:
+    environment:
+      MONGO_URL: ${API_MONGO_URL}
+
+  inventory-service:
+    environment:
+      MONGO_URL: ${INVENTORY_MONGO_URL}
+
+  grafana:
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+
+  # Zet de "View in Alertmanager"-link in e-mails op een bereikbaar adres
+  # i.p.v. de interne container-ID. localhost werkt op de hostmachine zelf.
+  alertmanager:
+    command:
+      - --storage.path=/alertmanager
+      - --web.external-url=http://localhost:9093
