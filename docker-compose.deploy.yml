@@ -1,0 +1,31 @@
+# Self-hosting auto-deployer.
+# Draait als EIGEN project (deployer) los van de devops-stack die hij beheert,
+# zodat hij zichzelf niet herstart tijdens een deploy.
+#
+# BELANGRIJK: de deployer opereert op een APARTE deploy-clone
+# (/Users/lab/deploy/Devops), NIET op je werk-checkout (~/Desktop/Devops).
+# Hij doet daar `git reset --hard origin/hosting`; dat mag je dev-werk nooit raken.
+# De deploy-clone heeft een eigen .env (gitignored, dus handmatig gekopieerd).
+#
+# Starten (vanuit je dev-checkout ~/Desktop/Devops):
+#   docker compose -f docker-compose.deploy.yml -p deployer up -d --build
+#
+# Logs bekijken:
+#   docker compose -f docker-compose.deploy.yml -p deployer logs -f
+services:
+  deployer:
+    build:
+      context: ./deploy
+    restart: always
+    environment:
+      DEPLOY_BRANCH: hosting
+      POLL_INTERVAL: "60"
+      REPO_DIR: /Users/lab/deploy/Devops
+      COMPOSE_PROJECT: devops
+    volumes:
+      # Host docker-socket: zo bouwt/start de container de echte host-stack.
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Deploy-clone op HETZELFDE absolute pad als op de host, anders kan de
+      # host-daemon de bind-mounts (./prometheus/... enz.) niet vinden.
+      - /Users/lab/deploy/Devops:/Users/lab/deploy/Devops
+    working_dir: /Users/lab/deploy/Devops
