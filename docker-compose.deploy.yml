@@ -1,0 +1,26 @@
+# Self-hosting auto-deployer.
+# Draait als EIGEN project (deployer) los van de devops-stack die hij beheert,
+# zodat hij zichzelf niet herstart tijdens een deploy.
+#
+# Starten:
+#   docker compose -f docker-compose.deploy.yml -p deployer up -d --build
+#
+# Logs bekijken:
+#   docker compose -f docker-compose.deploy.yml -p deployer logs -f
+services:
+  deployer:
+    build:
+      context: ./deploy
+    restart: always
+    environment:
+      DEPLOY_BRANCH: hosting
+      POLL_INTERVAL: "60"
+      REPO_DIR: /Users/lab/Desktop/Devops
+      COMPOSE_PROJECT: devops
+    volumes:
+      # Host docker-socket: zo bouwt/start de container de echte host-stack.
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Repo op HETZELFDE absolute pad als op de host, anders kan de
+      # host-daemon de bind-mounts (./prometheus/... enz.) niet vinden.
+      - /Users/lab/Desktop/Devops:/Users/lab/Desktop/Devops
+    working_dir: /Users/lab/Desktop/Devops
