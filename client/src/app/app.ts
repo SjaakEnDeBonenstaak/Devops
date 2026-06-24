@@ -16,8 +16,12 @@ export class App implements OnInit {
   constructor(private http: HttpClient, private env: EnvService) {}
 
   ngOnInit() {
-    this.http.get<any[]>(`${this.env.apiUrl}/users`).subscribe(data => {
-      this.users = data;
-    });
+    this.http
+      .get<any[]>(`${this.env.apiUrl}/users`, {
+        headers: { 'Cache-Control': 'no-cache' }
+      })
+      .subscribe(data => {
+        this.users = data;
+      });
   }
 }

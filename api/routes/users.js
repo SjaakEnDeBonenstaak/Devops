@@ -6,6 +6,7 @@ const { db } = require('../services/database');
 const { publisher } = require('../services/redis');
 
 router.get('/', async function(req, res) {
+  res.setHeader('Cache-Control', 'no-store');
   let users = await db.collection('users').find().toArray();
   res.json(users);
 });
