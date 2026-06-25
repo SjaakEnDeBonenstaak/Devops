@@ -2,6 +2,7 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
+var cors = require('cors');
 var logger = require('morgan');
 var promBundle = require('express-prom-bundle');
 
@@ -18,6 +19,13 @@ const metricsMiddleware = promBundle({
 });
 
 app.use(metricsMiddleware);
+
+// CORS: sta de frontend toe om de API vanuit de browser te bevragen.
+// CORS_ORIGIN mag een komma-gescheiden lijst zijn; '*' staat alle origins toe.
+var corsOrigin = process.env.CORS_ORIGIN || '*';
+app.use(cors({
+  origin: corsOrigin === '*' ? true : corsOrigin.split(',').map(function (o) { return o.trim(); }),
+}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
