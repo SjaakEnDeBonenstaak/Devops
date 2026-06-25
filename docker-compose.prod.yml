@@ -12,6 +12,7 @@ services:
   api:
     environment:
       MONGO_URL: ${API_MONGO_URL}
+      CORS_ORIGIN: https://lompvaardig.xyz
 
   inventory-service:
     environment:
